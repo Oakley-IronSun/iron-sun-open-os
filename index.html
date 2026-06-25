@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!--
+  Iron Sun Open OS v14.0 -- Stewardship Edition
+  Creator / Architect: Gary William Oakley Jr. (Chip Oakley)
+  Mission: Honor what came before. Care for what is here. Leave more behind than we received.
+
+  Copyright (c) 2026 Gary William Oakley Jr.
+  Released under the MIT License. See the LICENSE file distributed with this work,
+  or the "License & Notice" section within the app (ID tab).
+
+  Boundary: Local-first stewardship software only. No token, coin, reward, score,
+  balance, payment, custody, marketplace, value transfer, minting, prediction,
+  diagnosis, ranking, or spiritual authority.
+-->
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Iron Sun" />
+<meta name="theme-color" content="#07090d" />
+<meta name="description" content="Local-first stewardship software. Append-only, hash-chained, offline. No token, no custody." />
+<link rel="manifest" href="manifest.webmanifest" />
+<title>Iron Sun Open OS v14.0 · Stewardship Edition</title>
+<style>
+  :root{
+    --bg:#07090d;
+    --panel:#0e1219;
+    --panel-2:#11161f;
+    --ink:#f4f1ea;
+    --ink-soft:#aab2bd;
+    --ink-faint:#6b7280;
+    --line:rgba(255,255,255,.07);
+    --line-strong:rgba(255,255,255,.12);
+    --amber:#f5c156;
+    --amber-deep:#e0a23a;
+    --amber-glow:rgba(245,193,86,.16);
+    --radius:20px;
+    --radius-sm:14px;
+    --safe-top:env(safe-area-inset-top,0px);
+    --safe-bottom:env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",system-ui,sans-serif;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+    padding-bottom:calc(86px + var(--safe-bottom));
+  }
+  .wrap{max-width:520px;margin:0 auto;padding:calc(14px + var(--safe-top)) 16px 24px}
+
+  /* ---------- shared panel ---------- */
+  .panel{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:18px;
+    margin-bottom:14px;
+  }
+  .section-head{
+    display:flex;align-items:center;gap:10px;
+    font-size:19px;font-weight:700;letter-spacing:-.01em;margin:0 0 4px;
+  }
+  .section-head .ic{font-size:19px;line-height:1}
+
+  /* ---------- masthead / hero ---------- */
+  .hero{
+    position:relative;overflow:hidden;
+    background:var(--panel);
+    border:1px solid var(--line-strong);
+    border-radius:24px;
+    padding:22px 20px 18px;
+    margin-bottom:16px;
+  }
+  .hero::before{ /* the dawn -- the one signature element */
+    content:"";position:absolute;left:50%;top:-40%;
+    width:150%;height:150%;transform:translateX(-50%);
+    background:radial-gradient(60% 55% at 50% 38%,
+      rgba(245,193,86,.26) 0%,
+      rgba(224,162,58,.10) 38%,
+      rgba(7,9,13,0) 70%);
+    pointer-events:none;
+    animation:dawn 9s ease-in-out infinite alternate;
+  }
+  @keyframes dawn{from{opacity:.7;transform:translateX(-50%) translateY(0)}to{opacity:1;transform:translateX(-50%) translateY(-10px)}}
+  @media (prefers-reduced-motion:reduce){.hero::before{animation:none}}
+  .hero > *{position:relative}
+  .eyebrow{
+    color:var(--amber);font-size:11px;font-weight:800;
+    letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px;
+  }
+  .greeting{font-size:34px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;line-height:1.05}
+  .creed{color:var(--ink-soft);font-size:15px;margin:0 0 18px;max-width:34ch}
+  .cta{
+    display:block;width:100%;border:0;cursor:pointer;
+    background:linear-gradient(180deg,#f7cf72,#e7a93f);
+    color:#1a1205;font-size:17px;font-weight:800;letter-spacing:-.01em;
+    padding:16px 18px;border-radius:999px;
+    box-shadow:0 6px 22px var(--amber-glow);
+    transition:transform .12s ease,box-shadow .12s ease;
+  }
+  .cta:active{transform:scale(.985);box-shadow:0 3px 12px var(--amber-glow)}
+  .hero-row{display:flex;align-items:center;gap:10px;margin-top:12px}
+  .ghost{
+    flex:0 0 auto;background:var(--panel-2);border:1px solid var(--line-strong);
+    color:var(--ink);font-size:15px;font-weight:700;cursor:pointer;
+    padding:13px 18px;border-radius:999px;
+    transition:transform .12s ease,background .12s ease;
+  }
+  .ghost:active{transform:scale(.985);background:#161c26}
+  .tag{
+    color:var(--ink-faint);font-size:12.5px;
+    border:1px solid var(--line);border-radius:999px;
+    padding:7px 12px;background:rgba(255,255,255,.015);
+  }
+  .hero-row .tag{margin-left:auto}
+
+  /* ---------- daily brief ---------- */
+  .brief-line{
+    border-left:3px solid var(--amber);
+    padding-left:12px;margin:6px 0 14px;
+    color:var(--ink);font-size:15.5px;min-height:1.4em;
+  }
+  .brief-line.empty{color:var(--ink-faint);border-color:var(--line-strong);font-style:italic}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    background:var(--panel-2);border:1px solid var(--line);
+    color:var(--ink-soft);font-size:13px;font-weight:600;
+    padding:8px 13px;border-radius:999px;cursor:pointer;
+    transition:border-color .12s ease,color .12s ease;
+  }
+  .chip:active{border-color:var(--amber-deep);color:var(--ink)}
+
+  /* ---------- the sky ---------- */
+  .sky-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+  .sky-cell{
+    background:var(--panel-2);border:1px solid var(--line);
+    border-radius:var(--radius-sm);padding:14px 15px;
+  }
+  .sky-label{color:var(--ink-faint);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin:0 0 4px}
+  .sky-value{font-size:20px;font-weight:700;letter-spacing:-.01em}
+  .sky-sub{color:var(--ink-soft);font-size:12.5px;margin-top:2px}
+  .sky-foot{color:var(--ink-faint);font-size:12px;margin-top:12px}
+  .sky-foot a{color:var(--amber-deep);text-decoration:none;border-bottom:1px solid rgba(224,162,58,.4)}
+
+  /* ---------- living chains ---------- */
+  .chain{
+    border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:14px;margin-top:10px;background:var(--panel-2);
+  }
+  .chain-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  .chain-role{font-weight:700;font-size:15px}
+  .chain-when{color:var(--ink-faint);font-size:12px;white-space:nowrap}
+  .chain-text{color:var(--ink-soft);font-size:14px;margin-top:5px}
+  .chain-hash{
+    color:var(--ink-faint);font-size:11px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    margin-top:8px;display:flex;align-items:center;gap:6px;word-break:break-all;
+  }
+  .chain-hash .dot{color:var(--amber-deep)}
+
+  /* ---------- roles in motion ---------- */
+  .role-row{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 0;border-bottom:1px solid var(--line);
+  }
+  .role-row:last-child{border-bottom:0;padding-bottom:0}
+  .role-name{font-weight:700;font-size:15px}
+  .role-meta{color:var(--ink-faint);font-size:12.5px;margin-top:1px}
+  .role-count{
+    margin-left:auto;flex:0 0 auto;
+    background:var(--amber-glow);color:var(--amber);
+    font-size:13px;font-weight:800;border-radius:999px;
+    min-width:30px;height:30px;display:flex;align-items:center;justify-content:center;padding:0 9px;
+  }
+
+  /* ---------- observatory ---------- */
+  .obs-body{
+    position:relative;overflow:hidden;
+    border:1px solid var(--line);border-radius:var(--radius-sm);
+    background:var(--panel-2);
+    padding:18px;min-height:120px;margin-top:12px;
+  }
+  .obs-body::before{
+    content:"";position:absolute;left:50%;top:0;width:120%;height:120%;
+    transform:translateX(-50%);
+    background:radial-gradient(50% 50% at 50% 30%,rgba(245,193,86,.10),transparent 70%);
+    pointer-events:none;
+  }
+  .obs-body > *{position:relative}
+  .obs-note{color:var(--ink);font-size:15px;margin:0 0 10px}
+  .obs-stat{color:var(--ink-soft);font-size:14px;margin:6px 0}
+  .obs-stat b{color:var(--ink);font-weight:700}
+  .obs-empty{color:var(--ink-faint);font-size:14.5px;font-style:italic}
+  .disclaimer{color:var(--ink-faint);font-size:12.5px;margin-top:14px;line-height:1.5}
+
+  /* ---------- empty hint ---------- */
+  .empty-hint{color:var(--ink-faint);font-size:14px;margin-top:10px;font-style:italic}
+
+  /* ---------- tab bar ---------- */
+  .tabbar{
+    position:fixed;left:0;right:0;bottom:0;z-index:40;
+    display:flex;justify-content:space-around;align-items:center;
+    background:rgba(8,10,14,.86);
+    -webkit-backdrop-filter:saturate(160%) blur(18px);
+    backdrop-filter:saturate(160%) blur(18px);
+    border-top:1px solid var(--line);
+    padding:8px 6px calc(8px + var(--safe-bottom));
+  }
+  .tab{
+    border:0;background:transparent;cursor:pointer;
+    color:var(--ink-faint);font-size:13px;font-weight:700;
+    padding:8px 14px;border-radius:12px;transition:color .12s ease;
+  }
+  .tab.active{color:var(--amber)}
+
+  /* ---------- views ---------- */
+  .view{display:none}
+  .view.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  /* ---------- record form ---------- */
+  label.fld{display:block;margin:14px 0 6px;font-size:13px;font-weight:700;color:var(--ink-soft);letter-spacing:.02em}
+  input[type=text],textarea,select{
+    width:100%;background:var(--panel-2);border:1px solid var(--line-strong);
+    color:var(--ink);font-size:16px;border-radius:var(--radius-sm);
+    padding:13px 14px;font-family:inherit;
+  }
+  input:focus,textarea:focus,select:focus{outline:2px solid var(--amber-deep);outline-offset:1px;border-color:transparent}
+  textarea{min-height:96px;resize:vertical}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .helptext{color:var(--ink-faint);font-size:12.5px;margin-top:6px}
+
+  /* ---------- export / id ---------- */
+  pre.code{
+    background:var(--panel-2);border:1px solid var(--line);border-radius:var(--radius-sm);
+    padding:14px;font-size:11.5px;color:var(--ink-soft);overflow:auto;max-height:300px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;word-break:break-all;
+  }
+  .btn-line{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .btn{
+    flex:1 1 auto;border:1px solid var(--line-strong);background:var(--panel-2);
+    color:var(--ink);font-size:14.5px;font-weight:700;cursor:pointer;
+    padding:13px 16px;border-radius:var(--radius-sm);transition:background .12s ease;
+  }
+  .btn:active{background:#161c26}
+  .btn.primary{background:linear-gradient(180deg,#f7cf72,#e7a93f);color:#1a1205;border:0}
+  .kv{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .kv:last-child{border-bottom:0}
+  .kv .k{color:var(--ink-soft)}
+  .kv .v{font-weight:700;text-align:right;word-break:break-all}
+  .ok{color:#7ed492}
+  .warn{color:#e0a23a}
+
+  .toast{
+    position:fixed;left:50%;bottom:calc(96px + var(--safe-bottom));transform:translateX(-50%) translateY(20px);
+    background:#1a2230;border:1px solid var(--line-strong);color:var(--ink);
+    padding:12px 18px;border-radius:999px;font-size:14px;font-weight:600;
+    opacity:0;pointer-events:none;transition:opacity .2s ease,transform .2s ease;z-index:60;
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ============ BRIEF VIEW ============ -->
+  <section id="view-brief" class="view active">
+
+    <div class="hero">
+      <p class="eyebrow">Iron Sun Open OS v14.0 · Stewardship Edition</p>
+      <h1 class="greeting" id="greeting">Good Morning</h1>
+      <p class="creed">Honor what came before. Care for what is here. Leave more behind than we received.</p>
+      <button class="cta" id="cta-record">+ Record Meaningful Action</button>
+      <div class="hero-row">
+        <button class="ghost" id="cta-continue">Continue My Day</button>
+        <span class="tag">Local-first · no token · no custody</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">🌅</span> Daily Brief</h2>
+      <div id="brief-bday"></div>
+      <div class="brief-line empty" id="brief-line">Nothing recorded yet today. The first action sets the tone.</div>
+      <div id="brief-aff" class="obs-stat" style="color:var(--ink-soft);margin:0 0 12px"></div>
+      <div class="chips" id="brief-chips"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">☉</span> The Sky</h2>
+      <div class="sky-grid">
+        <div class="sky-cell"><p class="sky-label">Sunrise</p><div class="sky-value" id="sky-sunrise">--</div></div>
+        <div class="sky-cell"><p class="sky-label">Sunset</p><div class="sky-value" id="sky-sunset">--</div></div>
+        <div class="sky-cell"><p class="sky-label">Daylight</p><div class="sky-value" id="sky-daylight">--</div></div>
+        <div class="sky-cell"><p class="sky-label">Moon</p><div class="sky-value" id="sky-moon">--</div><div class="sky-sub" id="sky-moon-sub"></div></div>
+      </div>
+      <p class="sky-foot" id="sky-foot">Computed from today's date. <a href="#" id="sky-loc">Use my location</a> for exact times.</p>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">⛓️</span> Living Chains</h2>
+      <div id="chains-preview"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">🧭</span> Roles in Motion</h2>
+      <div id="roles-preview"></div>
+    </div>
+
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">🔭</span> Observatory</h2>
+      <div class="obs-body" id="obs-body"></div>
+      <p class="disclaimer">The Observatory uses your own records plus factual time/season context. It does not predict, score, diagnose, rank, issue tokens, or claim spiritual authority.</p>
+    </div>
+
+  </section>
+
+  <!-- ============ RECORD VIEW ============ -->
+  <section id="view-record" class="view">
+    <div class="hero">
+      <p class="eyebrow">Record</p>
+      <h1 class="greeting" style="font-size:28px">A meaningful action</h1>
+      <p class="creed">What did you tend to? Name it plainly -- this becomes part of your chain of record.</p>
+    </div>
+    <div class="panel">
+      <label class="fld" for="f-action">The action</label>
+      <input type="text" id="f-action" placeholder="e.g. Called Sara · Reviewed the audit scope" />
+
+      <div class="row2">
+        <div>
+          <label class="fld" for="f-role">Role</label>
+          <select id="f-role">
+            <option>Steward</option>
+            <option>Father</option>
+            <option>Founder</option>
+            <option>Builder</option>
+            <option>Neighbor</option>
+            <option>Self</option>
+          </select>
+        </div>
+        <div>
+          <label class="fld" for="f-spine">Spine</label>
+          <select id="f-spine">
+            <option>Mission</option>
+            <option>Role</option>
+            <option>Objective</option>
+            <option>Action</option>
+          </select>
+        </div>
+      </div>
+
+      <label class="fld" for="f-note">Note <span style="color:var(--ink-faint);font-weight:500">(optional)</span></label>
+      <textarea id="f-note" placeholder="Context worth keeping with this record."></textarea>
+      <p class="helptext">Records append only. Nothing is overwritten -- corrections are added as a new link in the chain.</p>
+
+      <div class="btn-line">
+        <button class="btn" id="rec-cancel">Cancel</button>
+        <button class="btn primary" id="rec-save">Record it</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CHAINS VIEW ============ -->
+  <section id="view-chains" class="view">
+    <div class="panel" style="margin-top:6px">
+      <h2 class="section-head"><span class="ic">⛓️</span> Living Chain</h2>
+      <p class="creed" style="margin:8px 0 0;font-size:14px">Every record, in order. Each link carries the hash of the one before it -- the chain verifies itself.</p>
+    </div>
+    <div id="chains-full"></div>
+  </section>
+
+  <!-- ============ ID VIEW ============ -->
+  <section id="view-id" class="view">
+    <div class="panel" style="margin-top:6px">
+      <h2 class="section-head"><span class="ic">🪪</span> Identity & Integrity</h2>
+      <div class="kv"><span class="k">Edition</span><span class="v">v14.0 · Stewardship</span></div>
+      <div class="kv"><span class="k">Records held</span><span class="v" id="id-count">0</span></div>
+      <div class="kv"><span class="k">Chain head</span><span class="v" id="id-head">--</span></div>
+      <div class="kv"><span class="k">Chain integrity</span><span class="v" id="id-integrity">--</span></div>
+      <div class="kv"><span class="k">First record</span><span class="v" id="id-first">--</span></div>
+      <div class="kv"><span class="k">Storage</span><span class="v">This device only</span></div>
+    </div>
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">🌱</span> Affirmation</h2>
+      <p class="obs-note" id="aff-line" style="margin:10px 0 8px">--</p>
+      <p class="obs-stat" id="aff-q" style="color:var(--ink-soft)">--</p>
+      <p class="disclaimer">Offered for reflection only. The software offers encouragement; you decide personal meaning. It does not predict, score, diagnose, rank, or claim authority.</p>
+    </div>
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">🎂</span> Profile</h2>
+      <p class="creed" style="margin:8px 0 12px;font-size:14px">Your name and birthday are kept on this device only. A birthday is recorded as a reflection date, never as a prediction.</p>
+      <label class="fld" for="p-name">Name</label>
+      <input type="text" id="p-name" placeholder="How you wish to be named here" />
+      <label class="fld" for="p-bday">Birthday <span style="color:var(--ink-faint);font-weight:500">(optional, MM-DD or YYYY-MM-DD)</span></label>
+      <input type="text" id="p-bday" placeholder="e.g. 03-14 or 1969-03-14" inputmode="numeric" />
+      <div class="btn-line"><button class="btn primary" id="p-save">Save profile</button></div>
+    </div>
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">🔐</span> Verify chain</h2>
+      <p class="creed" style="margin:8px 0 0;font-size:14px">Recompute every hash from the genesis link forward and confirm nothing has been altered.</p>
+      <div class="btn-line"><button class="btn primary" id="id-verify">Verify integrity</button></div>
+    </div>
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">📜</span> License &amp; Notice</h2>
+      <p class="creed" style="margin:8px 0 10px;font-size:14px">Iron Sun Open OS v14.0, Stewardship Edition. Created by Gary William Oakley Jr. Released as open source under the MIT License.</p>
+      <p class="disclaimer" style="margin-top:0">Local-first stewardship software only. No token, coin, reward, score, balance, payment, custody, marketplace, value transfer, minting, prediction, diagnosis, ranking, or spiritual authority. The software organizes and reflects; you decide meaning.</p>
+      <div class="btn-line"><button class="btn" id="lic-view">View MIT License</button></div>
+      <pre class="code" id="lic-text" style="display:none;margin-top:12px"></pre>
+    </div>
+  </section>
+
+  <!-- ============ EXPORT VIEW ============ -->
+  <section id="view-export" class="view">
+    <div class="panel" style="margin-top:6px">
+      <h2 class="section-head"><span class="ic">📤</span> Export</h2>
+      <p class="creed" style="margin:8px 0 0;font-size:14px">Your records, portable and yours. Copy the full ledger or download it as a file you control.</p>
+      <div class="btn-line">
+        <button class="btn primary" id="exp-copy">Copy ledger</button>
+        <button class="btn" id="exp-download">Download .json</button>
+      </div>
+    </div>
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">📥</span> Import</h2>
+      <p class="creed" style="margin:8px 0 12px;font-size:14px">Restore a ledger from a backup file. The imported chain is verified before anything is replaced -- a broken or altered file is refused.</p>
+      <input type="file" id="imp-file" accept="application/json,.json" style="display:none" />
+      <div class="btn-line">
+        <button class="btn primary" id="imp-pick">Choose backup file</button>
+      </div>
+      <p class="helptext" id="imp-status" style="margin-top:10px"></p>
+    </div>
+    <div class="panel">
+      <h2 class="section-head"><span class="ic">📄</span> Ledger</h2>
+      <pre class="code" id="exp-code">[]</pre>
+    </div>
+  </section>
+
+</div>
+
+<!-- ============ TAB BAR ============ -->
+<nav class="tabbar" role="tablist" aria-label="Main sections">
+  <button class="tab active" data-view="brief" role="tab" aria-selected="true">Brief</button>
+  <button class="tab" data-view="record" role="tab" aria-selected="false">Record</button>
+  <button class="tab" data-view="chains" role="tab" aria-selected="false">Chains</button>
+  <button class="tab" data-view="id" role="tab" aria-selected="false">ID</button>
+  <button class="tab" data-view="export" role="tab" aria-selected="false">Export</button>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+/* ============================================================
+   IRON SUN OPEN OS -- v13.0 Stewardship Edition
+   Local-first · hash-chained · append-only · no token · no custody
+   ============================================================ */
+
+const STORE_KEY = "ironsun.openos.v13.ledger";
+const LEGACY_KEYS = ["ironsun.openos.v12.ledger","ironsun.openos.v11.ledger","ironsun.ledger"];
+// Note: STORE_KEY intentionally stays at the v13 string so records persist across
+// the v13->v14 app update. The ledger format is unchanged; only the app advanced.
+
+const MIT_LICENSE =
+`MIT License
+
+Copyright (c) 2026 Gary William Oakley Jr.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.`;
+
+/* ---------- tiny utils ---------- */
+const $ = (id)=>document.getElementById(id);
+const pad = (n)=>String(n).padStart(2,"0");
+
+function toast(msg){
+  const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),1800);
+}
+
+/* ---------- SHA-256 hash chain ----------
+   Each link's hash = SHA256( prevHash + payload ).
+   Append-only: corrections are new links, never edits.
+   Uses native crypto.subtle when available (https/file://), with a
+   pure-JS fallback so the chain never silently breaks on http origins. */
+function sha256_js(ascii){
+  // Minimal, dependency-free SHA-256 over a UTF-8 string. Used only as fallback.
+  function rotr(n,x){return (x>>>n)|(x<<(32-n));}
+  const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  // utf-8 encode
+  const bytes=[];
+  for(let i=0;i<ascii.length;i++){
+    let c=ascii.charCodeAt(i);
+    if(c<0x80) bytes.push(c);
+    else if(c<0x800){bytes.push(0xc0|(c>>6),0x80|(c&0x3f));}
+    else if(c<0xd800||c>=0xe000){bytes.push(0xe0|(c>>12),0x80|((c>>6)&0x3f),0x80|(c&0x3f));}
+    else{i++;c=0x10000+(((c&0x3ff)<<10)|(ascii.charCodeAt(i)&0x3ff));bytes.push(0xf0|(c>>18),0x80|((c>>12)&0x3f),0x80|((c>>6)&0x3f),0x80|(c&0x3f));}
+  }
+  const l=bytes.length, bitLen=l*8;
+  bytes.push(0x80);
+  while(bytes.length%64!==56) bytes.push(0);
+  for(let i=7;i>=0;i--) bytes.push((bitLen/Math.pow(2,i*8))&0xff);
+  let h=[0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const w=new Array(64);
+  for(let j=0;j<bytes.length;j+=64){
+    for(let i=0;i<16;i++) w[i]=(bytes[j+i*4]<<24)|(bytes[j+i*4+1]<<16)|(bytes[j+i*4+2]<<8)|(bytes[j+i*4+3]);
+    for(let i=16;i<64;i++){
+      const s0=rotr(7,w[i-15])^rotr(18,w[i-15])^(w[i-15]>>>3);
+      const s1=rotr(17,w[i-2])^rotr(19,w[i-2])^(w[i-2]>>>10);
+      w[i]=(w[i-16]+s0+w[i-7]+s1)|0;
+    }
+    let [a,b,c,d,e,f,g,hh]=h;
+    for(let i=0;i<64;i++){
+      const S1=rotr(6,e)^rotr(11,e)^rotr(25,e);
+      const ch=(e&f)^(~e&g);
+      const t1=(hh+S1+ch+K[i]+w[i])|0;
+      const S0=rotr(2,a)^rotr(13,a)^rotr(22,a);
+      const maj=(a&b)^(a&c)^(b&c);
+      const t2=(S0+maj)|0;
+      hh=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0;
+    }
+    h=[(h[0]+a)|0,(h[1]+b)|0,(h[2]+c)|0,(h[3]+d)|0,(h[4]+e)|0,(h[5]+f)|0,(h[6]+g)|0,(h[7]+hh)|0];
+  }
+  return h.map(x=>(x>>>0).toString(16).padStart(8,"0")).join("");
+}
+async function sha256(str){
+  if(window.crypto && crypto.subtle && crypto.subtle.digest){
+    try{
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+    }catch(e){ /* fall through to JS */ }
+  }
+  return sha256_js(str);
+}
+function payloadOf(rec){
+  return JSON.stringify({t:rec.ts,a:rec.action,r:rec.role,s:rec.spine,n:rec.note});
+}
+async function linkHash(prevHash, rec){
+  return sha256((prevHash||"GENESIS") + "|" + payloadOf(rec));
+}
+
+/* ---------- Store abstraction ----------
+   One small interface over persistence. Today it wraps localStorage;
+   swapping to IndexedDB later is a change here only, not across the app. */
+const Store = {
+  get(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } },
+  set(key,val){ try{ localStorage.setItem(key,val); return true; }catch(e){ return false; } },
+  remove(key){ try{ localStorage.removeItem(key); }catch(e){} },
+};
+
+/* ---------- ledger load / migrate / save ---------- */
+function rawLoad(){
+  try{
+    let data = Store.get(STORE_KEY);
+    if(!data){ // migration shim: pull forward from a legacy key if present
+      for(const k of LEGACY_KEYS){
+        const legacy = Store.get(k);
+        if(legacy){ data=legacy; Store.set(STORE_KEY,legacy); break; }
+      }
+    }
+    return data ? JSON.parse(data) : [];
+  }catch(e){ return []; }
+}
+function rawSave(ledger){
+  if(!Store.set(STORE_KEY, JSON.stringify(ledger))){
+    toast("Storage full or unavailable -- export a backup");
+  }
+}
+
+let LEDGER = rawLoad();
+
+async function appendRecord({action, role, spine, note}){
+  const prev = LEDGER.length ? LEDGER[LEDGER.length-1] : null;
+  const rec = {
+    ts: new Date().toISOString(),
+    action: action.trim(),
+    role, spine,
+    note: (note||"").trim(),
+    prevHash: prev ? prev.hash : null,
+  };
+  rec.hash = await linkHash(rec.prevHash, rec);
+  LEDGER.push(rec);
+  rawSave(LEDGER);
+  return rec;
+}
+
+async function verifyChain(){
+  return verifyLedger(LEDGER);
+}
+async function verifyLedger(ledger){
+  if(!Array.isArray(ledger)) return {ok:false, at:0, reason:"not a ledger"};
+  let prevHash = null;
+  for(let i=0;i<ledger.length;i++){
+    const rec = ledger[i];
+    if(!rec || typeof rec.hash!=="string") return {ok:false, at:i, reason:"malformed record"};
+    if(rec.prevHash !== prevHash) return {ok:false, at:i, reason:"broken link"};
+    const expect = await linkHash(prevHash, rec);
+    if(expect !== rec.hash) return {ok:false, at:i, reason:"altered record"};
+    prevHash = rec.hash;
+  }
+  return {ok:true, at:ledger.length};
+}
+
+/* ---------- astronomy: sunrise / sunset / daylight / moon ----------
+   NOAA solar equations. Falls back to a sensible default latitude
+   until the person opts into precise location. */
+let LAT = 40.0, LON = -75.0, HAVE_LOC = false; // default ~mid-Atlantic US
+
+function dayOfYear(d){
+  const start=new Date(d.getFullYear(),0,0);
+  return Math.floor((d-start)/86400000);
+}
+function solarTimes(date, lat, lon){
+  // Returns {sunrise:Date, sunset:Date} in local time, or null for polar day/night.
+  const rad=Math.PI/180, deg=180/Math.PI;
+  const N=dayOfYear(date);
+  const lngHour=lon/15;
+  function calc(isRise){
+    const t = N + (((isRise?6:18)-lngHour)/24);
+    const M = (0.9856*t)-3.289;
+    let L = M + (1.916*Math.sin(M*rad)) + (0.020*Math.sin(2*M*rad)) + 282.634;
+    L=((L%360)+360)%360;
+    let RA = deg*Math.atan(0.91764*Math.tan(L*rad));
+    RA=((RA%360)+360)%360;
+    RA += (Math.floor(L/90)*90 - Math.floor(RA/90)*90);
+    RA/=15;
+    const sinDec=0.39782*Math.sin(L*rad);
+    const cosDec=Math.cos(Math.asin(sinDec));
+    const zenith=90.833;
+    const cosH=(Math.cos(zenith*rad)-(sinDec*Math.sin(lat*rad)))/(cosDec*Math.cos(lat*rad));
+    if(cosH>1||cosH<-1) return null; // no sunrise/sunset (polar)
+    let H = isRise ? 360-deg*Math.acos(cosH) : deg*Math.acos(cosH);
+    H/=15;
+    const T = H + RA - (0.06571*t) - 6.622;
+    let UT = T - lngHour; UT=((UT%24)+24)%24;
+    // getTimezoneOffset() is minutes WEST of UTC (positive for the Americas),
+    // so local = UT minus that offset, in hours.
+    const tzHours = -date.getTimezoneOffset()/60;
+    let local = (UT + tzHours); local=((local%24)+24)%24;
+    let hh=Math.floor(local), mm=Math.round((local-hh)*60);
+    if(mm===60){mm=0;hh=(hh+1)%24;}
+    const d=new Date(date.getFullYear(),date.getMonth(),date.getDate(),hh,mm,0,0);
+    return d;
+  }
+  const sr=calc(true), ss=calc(false);
+  if(!sr||!ss) return null;
+  return {sunrise:sr, sunset:ss};
+}
+function fmtTime(d){
+  let h=d.getHours(), m=d.getMinutes(); const ap=h>=12?"PM":"AM";
+  h=h%12||12; return `${h}:${pad(m)} ${ap}`;
+}
+function moonPhase(date){
+  // Conway-style approximation; phase 0..1 of synodic month.
+  const lp=2551443; // synodic seconds
+  const ref=new Date(2000,0,6,18,14,0); // known new moon
+  const phaseSec=((date-ref)/1000)%lp;
+  const frac=(phaseSec<0?phaseSec+lp:phaseSec)/lp;
+  const names=["New","Waxing crescent","First quarter","Waxing gibbous","Full","Waning gibbous","Last quarter","Waning crescent"];
+  const idx=Math.round(frac*8)%8;
+  const illum=Math.round((1-Math.cos(frac*2*Math.PI))/2*100);
+  return {name:names[idx], illum};
+}
+
+function renderSky(){
+  const now=new Date();
+  const t=solarTimes(now,LAT,LON);
+  if(t){
+    $("sky-sunrise").textContent=fmtTime(t.sunrise);
+    $("sky-sunset").textContent=fmtTime(t.sunset);
+    const mins=Math.round((t.sunset-t.sunrise)/60000);
+    const safe = mins>0 ? mins : mins+1440;
+    $("sky-daylight").textContent=`${Math.floor(safe/60)}h ${pad(safe%60)}m`;
+  }else{
+    $("sky-sunrise").textContent="--"; $("sky-sunset").textContent="--"; $("sky-daylight").textContent="polar";
+  }
+  const mp=moonPhase(now);
+  $("sky-moon").textContent=mp.name;
+  $("sky-moon-sub").textContent=`${mp.illum}% illuminated`;
+  $("sky-foot").firstChild.textContent = HAVE_LOC
+    ? "Computed for your location. "
+    : "Computed from today's date. ";
+}
+
+/* ---------- greeting by time of day ---------- */
+function renderGreeting(){
+  const h=new Date().getHours();
+  $("greeting").textContent = h<5?"Still Night" : h<12?"Good Morning" : h<17?"Good Afternoon" : h<21?"Good Evening" : "Good Night";
+}
+
+/* ---------- date helpers ---------- */
+function isToday(iso){ const d=new Date(iso),n=new Date(); return d.toDateString()===n.toDateString(); }
+function relTime(iso){
+  const d=new Date(iso), now=new Date(), s=Math.floor((now-d)/1000);
+  if(s<60) return "just now";
+  if(s<3600) return Math.floor(s/60)+"m ago";
+  if(s<86400 && isToday(iso)) return fmtTime(d);
+  const days=Math.floor(s/86400);
+  if(days<7) return days+"d ago";
+  return d.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+}
+
+/* ---------- BRIEF renderers ---------- */
+function renderBrief(){
+  const today = LEDGER.filter(r=>isToday(r.ts));
+  const line=$("brief-line"), chips=$("brief-chips");
+  if(today.length===0){
+    line.className="brief-line empty";
+    line.textContent="Nothing recorded yet today. The first action sets the tone.";
+  }else{
+    line.className="brief-line";
+    const roles=[...new Set(today.map(r=>r.role))];
+    const word = today.length===1 ? "action" : "actions";
+    line.textContent=`${today.length} ${word} today across ${roles.length} ${roles.length===1?"role":"roles"} -- most recent: ${today[today.length-1].action}.`;
+  }
+  // birthday as a reflection date (never a prediction)
+  const bday=$("brief-bday");
+  if(isBirthdayToday()){
+    const who = PROFILE.name ? PROFILE.name : "you";
+    bday.innerHTML=`<div class="brief-line" style="border-color:var(--amber);color:var(--ink)">🎂 Today is ${esc(who)}'s birthday -- held here as a day for reflection, not a forecast. A good day to ask what you want to carry forward.</div>`;
+  }else{
+    bday.innerHTML="";
+  }
+  // affirmation, keyed to the role most in motion
+  const aff=affirmationFor(currentRole());
+  $("brief-aff").textContent=aff.line;
+  // quick chips: prompts to lower friction on the next record
+  const prompts=["Tended a relationship","Kept a commitment","Repaired something","Learned / passed on","Cared for self"];
+  chips.innerHTML="";
+  prompts.forEach(p=>{
+    const b=document.createElement("button");
+    b.className="chip"; b.textContent=p;
+    b.onclick=()=>{ go("record"); $("f-action").value=p+": "; $("f-action").focus(); };
+    chips.appendChild(b);
+  });
+}
+
+function renderChainsPreview(){
+  const box=$("chains-preview");
+  const recent=LEDGER.slice(-3).reverse();
+  if(recent.length===0){
+    box.innerHTML='<p class="empty-hint">No links yet. Recording your first meaningful action begins the chain.</p>';
+    return;
+  }
+  box.innerHTML="";
+  recent.forEach(r=>box.appendChild(chainCard(r,true)));
+}
+
+function chainCard(r, compact){
+  const el=document.createElement("div"); el.className="chain";
+  el.innerHTML=`
+    <div class="chain-top">
+      <span class="chain-role">${esc(r.role)} · ${esc(r.spine)}</span>
+      <span class="chain-when">${relTime(r.ts)}</span>
+    </div>
+    <div class="chain-text">${esc(r.action)}${r.note?` -- ${esc(r.note)}`:""}</div>
+    <div class="chain-hash"><span class="dot">⛓</span>${r.hash.slice(0,16)}...</div>`;
+  return el;
+}
+
+function renderRolesPreview(){
+  const box=$("roles-preview");
+  if(LEDGER.length===0){
+    box.innerHTML='<p class="empty-hint">Roles appear here as you record actions under them.</p>';
+    return;
+  }
+  const map={};
+  LEDGER.forEach(r=>{ (map[r.role]=map[r.role]||{count:0,last:null}); map[r.role].count++; map[r.role].last=r.ts; });
+  const rows=Object.entries(map).sort((a,b)=>b[1].count-a[1].count);
+  box.innerHTML="";
+  rows.forEach(([role,info])=>{
+    const el=document.createElement("div"); el.className="role-row";
+    el.innerHTML=`<div><div class="role-name">${esc(role)}</div>
+      <div class="role-meta">last tended ${relTime(info.last)}</div></div>
+      <span class="role-count">${info.count}</span>`;
+    box.appendChild(el);
+  });
+}
+
+function renderObservatory(){
+  const box=$("obs-body");
+  const now=new Date();
+  const season=["Winter","Winter","Spring","Spring","Spring","Summer","Summer","Summer","Autumn","Autumn","Autumn","Winter"][now.getMonth()];
+  if(LEDGER.length===0){
+    box.innerHTML=`<p class="obs-empty">The Observatory reflects what you record back to you. It is quiet until the first action is kept.</p>
+      <p class="obs-stat" style="margin-top:10px">Season: <b>${season}</b> · ${now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}</p>`;
+    return;
+  }
+  const today=LEDGER.filter(r=>isToday(r.ts)).length;
+  const week=LEDGER.filter(r=>{const d=new Date(r.ts);return (now-d)/86400000<7;}).length;
+  const roles=new Set(LEDGER.map(r=>r.role)).size;
+  const first=new Date(LEDGER[0].ts);
+  const spanDays=Math.max(1,Math.round((now-first)/86400000));
+  box.innerHTML=`
+    <p class="obs-note">You have kept <b>${LEDGER.length}</b> ${LEDGER.length===1?"record":"records"} across <b>${roles}</b> ${roles===1?"role":"roles"}, over <b>${spanDays}</b> ${spanDays===1?"day":"days"}.</p>
+    <p class="obs-stat">Today: <b>${today}</b> · this week: <b>${week}</b></p>
+    <p class="obs-stat">Season: <b>${season}</b> · ${now.toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"})}</p>`;
+}
+
+/* ---------- CHAINS full view ---------- */
+function renderChainsFull(){
+  const box=$("chains-full");
+  if(LEDGER.length===0){
+    box.innerHTML='<div class="panel"><p class="empty-hint">No links yet. The chain begins with your first record.</p></div>';
+    return;
+  }
+  box.innerHTML="";
+  [...LEDGER].reverse().forEach(r=>{
+    const p=document.createElement("div"); p.className="panel"; p.style.padding="14px";
+    p.appendChild(chainCard(r,false));
+    box.appendChild(p);
+  });
+}
+
+/* ---------- profile (name + birthday), local only ---------- */
+const PROFILE_KEY = "ironsun.openos.v13.profile";
+function loadProfile(){
+  try{ return JSON.parse(localStorage.getItem(PROFILE_KEY)) || {}; }catch(e){ return {}; }
+}
+function saveProfile(p){
+  try{ localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); }
+  catch(e){ toast("Storage unavailable -- open in Safari to keep your profile"); }
+}
+let PROFILE = loadProfile();
+
+/* ---------- affirmations keyed to role ----------
+   Offered for reflection only. No prediction, no score, no authority.
+   Voice carried forward from prior versions: encouragement + a question,
+   the person decides personal meaning. */
+const AFFIRMATIONS = {
+  Steward:  "You hold what was entrusted to you with care. Tending is its own kind of building.",
+  Father:   "The attention you give today is the inheritance they carry tomorrow.",
+  Founder:  "You began something that did not exist before. Steadiness finishes what vision starts.",
+  Builder:  "Good work is honest whether or not anyone is watching. Lay the next true course.",
+  Neighbor: "Small kept commitments are how trust is built between people.",
+  Self:     "Caring for the one who does the caring is not indulgence. It is maintenance.",
+  _default: "Honor what came before. Care for what is here. Leave more behind than you received.",
+};
+const REFLECTIONS = {
+  Steward:  "What did you tend today that someone after you will benefit from?",
+  Father:   "What did you pass on today, in word or in example?",
+  Founder:  "What did you move forward, even by a little?",
+  Builder:  "What did you make or mend that will outlast the day?",
+  Neighbor: "Whose load did you lighten, or could you?",
+  Self:     "What did you do today to keep yourself able to keep going?",
+  _default: "What good can you do today that someone may benefit from tomorrow?",
+};
+
+function affirmationFor(role){
+  return {
+    line: AFFIRMATIONS[role] || AFFIRMATIONS._default,
+    question: REFLECTIONS[role] || REFLECTIONS._default,
+  };
+}
+// pick role for affirmation: most-tended role today, else most-tended overall, else Steward
+function currentRole(){
+  if(LEDGER.length===0) return "Steward";
+  const today=LEDGER.filter(r=>isToday(r.ts));
+  const pool=today.length?today:LEDGER;
+  const count={};
+  pool.forEach(r=>count[r.role]=(count[r.role]||0)+1);
+  return Object.entries(count).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+/* ---------- birthday as a reflection date (never a prediction) ---------- */
+function parseBirthday(s){
+  if(!s) return null;
+  const m=s.trim().match(/^(?:(\d{4})-)?(\d{1,2})-(\d{1,2})$/);
+  if(!m) return null;
+  const mo=+m[2], d=+m[3];
+  if(mo<1||mo>12||d<1||d>31) return null;
+  return {month:mo, day:d, year:m[1]?+m[1]:null};
+}
+function isBirthdayToday(){
+  const b=parseBirthday(PROFILE.birthday);
+  if(!b) return false;
+  const n=new Date();
+  return (n.getMonth()+1)===b.month && n.getDate()===b.day;
+}
+
+/* ---------- ID view ---------- */
+async function renderID(){
+  $("id-count").textContent=LEDGER.length;
+  $("id-head").textContent = LEDGER.length ? LEDGER[LEDGER.length-1].hash.slice(0,18)+"..." : "--";
+  $("id-first").textContent = LEDGER.length ? new Date(LEDGER[0].ts).toLocaleDateString() : "--";
+  const el=$("id-integrity");
+  el.textContent="checking..."; el.className="v";
+  const res=await verifyChain();
+  if(res.ok){ el.textContent="✓ verified"; el.className="v ok"; }
+  else{ el.textContent=`✗ ${res.reason} @${res.at}`; el.className="v warn"; }
+  // affirmation
+  const aff=affirmationFor(currentRole());
+  $("aff-line").textContent=aff.line;
+  $("aff-q").textContent=aff.question;
+  // profile fields
+  $("p-name").value = PROFILE.name || "";
+  $("p-bday").value = PROFILE.birthday || "";
+}
+
+/* ---------- EXPORT view ---------- */
+function renderExport(){
+  $("exp-code").textContent = JSON.stringify(LEDGER, null, 2);
+}
+
+/* ---------- escape ---------- */
+function esc(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+/* ---------- navigation ---------- */
+function go(view){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  $("view-"+view).classList.add("active");
+  document.querySelectorAll(".tab").forEach(t=>{
+    const on = t.dataset.view===view;
+    t.classList.toggle("active",on);
+    t.setAttribute("aria-selected", on?"true":"false");
+  });
+  window.scrollTo({top:0,behavior:"instant"in window?"instant":"auto"});
+  if(view==="chains") renderChainsFull();
+  if(view==="id") renderID();
+  if(view==="export") renderExport();
+}
+
+/* ---------- wire up ---------- */
+function renderAll(){
+  renderGreeting(); renderSky(); renderBrief();
+  renderChainsPreview(); renderRolesPreview(); renderObservatory();
+}
+
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>go(t.dataset.view));
+$("cta-record").onclick=()=>go("record");
+$("cta-continue").onclick=()=>{ go("brief"); toast("Carrying on where you left off"); };
+$("rec-cancel").onclick=()=>{ $("f-action").value=""; $("f-note").value=""; go("brief"); };
+
+$("rec-save").onclick=async ()=>{
+  const action=$("f-action").value.trim();
+  if(!action){ toast("Name the action first"); $("f-action").focus(); return; }
+  await appendRecord({
+    action, role:$("f-role").value, spine:$("f-spine").value, note:$("f-note").value
+  });
+  $("f-action").value=""; $("f-note").value="";
+  renderAll();
+  go("brief");
+  toast("Recorded -- a new link in your chain");
+};
+
+$("id-verify").onclick=async ()=>{
+  const res=await verifyChain();
+  toast(res.ok ? "Chain verified -- nothing altered" : `Integrity issue: ${res.reason} @${res.at}`);
+  renderID();
+};
+
+$("p-save").onclick=()=>{
+  const bdayRaw=$("p-bday").value.trim();
+  if(bdayRaw && !parseBirthday(bdayRaw)){ toast("Use MM-DD or YYYY-MM-DD"); $("p-bday").focus(); return; }
+  PROFILE.name=$("p-name").value.trim();
+  PROFILE.birthday=bdayRaw;
+  saveProfile(PROFILE);
+  renderAll();
+  toast("Profile saved on this device");
+};
+
+$("lic-view").onclick=()=>{
+  const pre=$("lic-text");
+  if(pre.style.display==="none"){
+    pre.textContent=MIT_LICENSE; pre.style.display="block"; $("lic-view").textContent="Hide license";
+  }else{
+    pre.style.display="none"; $("lic-view").textContent="View MIT License";
+  }
+};
+
+$("exp-copy").onclick=async ()=>{
+  try{ await navigator.clipboard.writeText(JSON.stringify(LEDGER,null,2)); toast("Ledger copied"); }
+  catch(e){ toast("Select the text below to copy"); }
+};
+$("exp-download").onclick=()=>{
+  const blob=new Blob([JSON.stringify(LEDGER,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url; a.download=`ironsun-ledger-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast("Download started");
+};
+
+$("imp-pick").onclick=()=>$("imp-file").click();
+$("imp-file").onchange=(e)=>{
+  const file=e.target.files && e.target.files[0];
+  if(!file) return;
+  const status=$("imp-status");
+  status.textContent="Reading...";
+  const reader=new FileReader();
+  reader.onload=async ()=>{
+    let parsed;
+    try{ parsed=JSON.parse(reader.result); }
+    catch(err){ status.textContent="Could not read that file -- it is not valid JSON."; $("imp-file").value=""; return; }
+    if(!Array.isArray(parsed)){ status.textContent="That file is not a ledger."; $("imp-file").value=""; return; }
+    status.textContent="Verifying chain...";
+    const res=await verifyLedger(parsed);
+    if(!res.ok){
+      status.textContent=`Refused: the backup failed verification (${res.reason} at link ${res.at}). Nothing was changed.`;
+      $("imp-file").value=""; return;
+    }
+    if(LEDGER.length>0 && !confirm(`Replace your current ${LEDGER.length} record(s) with ${parsed.length} record(s) from this backup? This cannot be undone.`)){
+      status.textContent="Import cancelled. Nothing was changed.";
+      $("imp-file").value=""; return;
+    }
+    LEDGER=parsed; rawSave(LEDGER); renderAll(); renderExport();
+    status.textContent=`Imported ${parsed.length} verified record(s).`;
+    $("imp-file").value="";
+    toast("Backup imported and verified");
+  };
+  reader.onerror=()=>{ status.textContent="Could not read that file."; $("imp-file").value=""; };
+  reader.readAsText(file);
+};
+
+$("sky-loc").onclick=(e)=>{
+  e.preventDefault();
+  if(!navigator.geolocation){ toast("Location not available"); return; }
+  toast("Locating...");
+  navigator.geolocation.getCurrentPosition(
+    pos=>{ LAT=pos.coords.latitude; LON=pos.coords.longitude; HAVE_LOC=true; renderSky(); toast("Sky updated for your location"); },
+    ()=>toast("Location permission declined")
+  );
+};
+
+/* ---------- boot ---------- */
+renderAll();
+
+/* ---------- PWA: register service worker if served over http(s) ----------
+   No-op on file:// or where unsupported, so local use is unaffected. */
+if("serviceWorker" in navigator && location.protocol.startsWith("http")){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("sw.js").catch(()=>{/* offline install unavailable; app still works */});
+  });
+}
+</script>
+</body>
+</html>
